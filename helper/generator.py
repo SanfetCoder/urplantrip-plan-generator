@@ -3,6 +3,7 @@ import pandas as pd
 from travel_categories import categories
 from random import randint
 from enum import Enum
+import numpy as np
 
 # ====== Functions =========
 
@@ -19,9 +20,6 @@ files = list(filter(lambda x : not x.startswith('.') , os.listdir(dataset_path))
 korea_seoul = pd.DataFrame(pd.read_csv(file_path(files[0])))
 # drop NaN Value
 korea_seoul = korea_seoul.dropna(subset=['Kid_friendly','Old_Can_Walk'])
-
-# Enum of column
-from enum import Enum
 
 class Columns(Enum):
   country = "country"
@@ -62,3 +60,17 @@ korea_seoul = korea_seoul[korea_seoul[Columns.Old_Can_Walk.value] == has_old]
 
 # Display available categories
 available_categories = list(korea_seoul[Columns.category.value])
+
+# Prompt a user to select categories
+selected_categories = []
+
+for category in np.unique(available_categories):
+  if category not in selected_categories:
+    response = input(f'Do you want {category} ? (Y/N)')
+
+    # Distinct categories 
+    if response.lower() == 'y':
+      selected_categories.append(category)
+
+# Filter places according to selected_categories
+print(korea_seoul[Columns.category.value])
