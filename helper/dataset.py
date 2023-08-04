@@ -24,37 +24,36 @@ korea_seoul = korea_seoul.dropna(subset=['Kid_friendly','Old_Can_Walk'])
 from enum import Enum, auto
 
 class Categories(Enum):
-  country = auto()
-  area = auto()
-  name_place = auto()
-  location = auto()
-  link_location = auto()
-  lat_long = auto()
-  open_time = auto()
-  close_time = auto()
-  day_close = auto()
-  best_hour = auto()
-  min_time_spending = auto()
-  max_time_spending = auto()
-  best_time_to_go = auto()
-  month = auto()
-  best_month = auto()
-  special_events = auto()
-  category = auto()
-  suitable_to_go_with = auto()
-  Kid_friendly = auto()
-  Old_Can_Walk = auto()
-  fee_USD = auto()
+  country = "country"
+  area = "area"
+  name_place = "name_place"
+  location = "location"
+  link_location = "link_location"
+  lat_long = "lat_long"
+  open_time = "open_time"
+  close_time = "close_time"
+  day_close = "day_close"
+  best_hour = "best_hour"
+  min_time_spending = "min_time_spending"
+  max_time_spending = "max_time_spending"
+  best_time_to_go = "best_time_to_go"
+  month = "month"
+  best_month = "best_month"
+  special_events = "special_events"
+  category = "category"
+  suitable_to_go_with = "suitable_to_go_with"
+  Kid_friendly = "Kid_friendly"
+  Old_Can_Walk = "Old_Can_Walk"
+  fee_USD = "fee_USD"
 
-# # Promp user's input
+# Promp user's input
 # destination = input('Which city do you want to travel?')
 # duration = int(input("How long will you travel?"))
 # has_child = input('Any child in your trip?').lower() == 'y'
 # has_old = input('Any elder in your trip?').lower() == 'y'
-# #  Random 5 categories
+#  Random 5 categories
 # selected_categories = [categories[randint(0, len(categories) -1)] for _ in range(5)]
 
 # Filter out places according to has_child and has_old
-# korea_seoul[]
-
+korea_seoul[Categories.Kid_friendly.value] = korea_seoul[Categories.Kid_friendly.value].apply(lambda value : value.lower() == 'y')
 print(korea_seoul)
