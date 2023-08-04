@@ -21,9 +21,9 @@ korea_seoul = pd.DataFrame(pd.read_csv(file_path(files[0])))
 korea_seoul = korea_seoul.dropna(subset=['Kid_friendly','Old_Can_Walk'])
 
 # Enum of column
-from enum import Enum, auto
+from enum import Enum
 
-class Categories(Enum):
+class Columns(Enum):
   country = "country"
   area = "area"
   name_place = "name_place"
@@ -47,13 +47,18 @@ class Categories(Enum):
   fee_USD = "fee_USD"
 
 # Promp user's input
-# destination = input('Which city do you want to travel?')
-# duration = int(input("How long will you travel?"))
-# has_child = input('Any child in your trip?').lower() == 'y'
-# has_old = input('Any elder in your trip?').lower() == 'y'
-#  Random 5 categories
-# selected_categories = [categories[randint(0, len(categories) -1)] for _ in range(5)]
+destination = input('Which city do you want to travel?')
+duration = int(input("How long will you travel?"))
+has_child = input('Any child in your trip?').lower() == 'y'
+has_old = input('Any elder in your trip?').lower() == 'y'
+
+# Change from Y and N to True and False
+korea_seoul[Columns.Kid_friendly.value] = korea_seoul[Columns.Kid_friendly.value].apply(lambda value : value.lower() == 'y')
+korea_seoul[Columns.Old_Can_Walk.value] = korea_seoul[Columns.Old_Can_Walk.value].apply(lambda value : value.lower() == 'y')
 
 # Filter out places according to has_child and has_old
-korea_seoul[Categories.Kid_friendly.value] = korea_seoul[Categories.Kid_friendly.value].apply(lambda value : value.lower() == 'y')
-print(korea_seoul)
+korea_seoul = korea_seoul[korea_seoul[Columns.Kid_friendly.value] == has_child]
+korea_seoul = korea_seoul[korea_seoul[Columns.Old_Can_Walk.value] == has_old]
+
+# Display available categories
+available_categories = list(korea_seoul[Columns.category.value])
