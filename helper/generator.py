@@ -31,7 +31,7 @@ def get_itinerary(city, days):
     # Current time for each place
     current_time = start_time
     # Create empty array for current day in the itinerary
-    itinerary[f'Day{current_day + 1}'] = []
+    itinerary[f'Day{current_day + 1}'] = {}
     for current_place in range(5):
       # random_index for place
       random_index = 0
@@ -42,8 +42,17 @@ def get_itinerary(city, days):
       used_index.append(random_index)
       # random place
       random_place = df.iloc[random_index]
+      # Serialize the randome place to wanted format
+      serialized_place = {
+        'name_place' : random_place['name_place'],
+        'location' : random_place['location'],
+        'open' : random_place['open(time)'],
+        'close' : random_place['close(time)']
+      }
       # Add this random_place to current_places
-      itinerary[f'Day{current_day + 1}'].append(random_place.to_dict())
+      itinerary[f'Day{current_day + 1}'][current_time.strftime("%H:%M")] = serialized_place
+      # Increase current time with transportation time and maximum_time_spending
+      current_time = current_time + timedelta(minutes=30) + timedelta(minutes=int(random_place['max_time_spending(min)']))
 
   # return the itinerary
   return itinerary
