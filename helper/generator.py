@@ -34,9 +34,9 @@ def generate_itinerary(city, days):
     itinerary[f'Day{current_day + 1}'] = {}
     for current_place in range(5):
       # random_index for place
-      random_index = 0
+      random_index = randint(0, len(df) - 1)
       # Make sure it keeps randomizing the index til it is not the one in used_index
-      while random_index in used_index:
+      while (random_index in used_index):
         random_index = randint(0, len(df) - 1)
       # Adding this to used_index
       used_index.append(random_index)
