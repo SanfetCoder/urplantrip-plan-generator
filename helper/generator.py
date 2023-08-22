@@ -1,4 +1,4 @@
-from database.db import get_database
+from helper.database.db import get_database
 import pandas as pd
 from random import randint
 import numpy as np
@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 DB = get_database()
 
 # Get itinerary as DataFrame
-def get_itinerary(city, days):
+def generate_itinerary(city, days):
   # Current Collection
   COLLECTION = DB[city]
   # Get the all city
@@ -57,4 +57,3 @@ def get_itinerary(city, days):
   # return the itinerary
   return itinerary
 
-print(get_itinerary('Korea_Seoul', 3))

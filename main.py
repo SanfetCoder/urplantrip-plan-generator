@@ -1,9 +1,10 @@
 from fastapi import FastAPI
-
+from helper.generator import generate_itinerary
 # Create an app for this API
 app = FastAPI()
 
 # At root route
-@app.get("/")
-async def root():
-  return {"message": "Hello World"}
+@app.get("/itinerary/{city}/{days}")
+def get_itinerary(city, days):  
+  itinerary = generate_itinerary(city=city, days=int(days))
+  return itinerary
