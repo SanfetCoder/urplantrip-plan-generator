@@ -1,10 +1,11 @@
 from database.db import get_database
 import pandas as pd
+from random import randint
 
 DB = get_database()
 
 # Get itinerary as DataFrame
-def get_itinerary(city):
+def get_itinerary(city, days):
   # Current Collection
   COLLECTION = DB[city]
   # Get the all city
@@ -13,7 +14,28 @@ def get_itinerary(city):
   df = pd.DataFrame(result)
   # Drop all Nan
   df = df.dropna()
-  # Return the dataframe
-  return df
 
-print(get_itinerary('Korea_Seoul'))
+  # Itinerary
+  itinerary = []
+  # The indexing of places that have been already used
+  used_index = []
+
+  # adding places for each day
+  for current_day in range(days):
+    for current_place in range(5):
+      # random_index for place
+      random_index = 0
+      # Make sure it keeps randomizing the index til it is not the one in used_index
+      while random_index in used_index:
+        random_index = randint(0, len(df) - 1)
+      # Adding this to used_index
+      used_index.append(random_index)
+      # random place
+      random_place = df.iloc[random_index]
+      # Append this random_place to current_places
+      itinerary.append(random_place.to_dict())
+
+  # return the itinerary
+  return itinerary
+
+print(len(get_itinerary('Korea_Seoul', 3)))
