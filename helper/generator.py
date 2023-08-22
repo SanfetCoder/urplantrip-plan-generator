@@ -3,6 +3,7 @@ import pandas as pd
 from random import randint
 import numpy as np
 from datetime import datetime, timedelta
+from helper.utils import doesExceed
 
 DB = get_database()
 
@@ -57,3 +58,17 @@ def generate_itinerary(city, days):
   # return the itinerary
   return itinerary
 
+# Get unqieu categories based on the city
+async def get_categories(city):
+  # Selected collection
+  COLLECTION = DB[city]
+  # Fetch all data from the collection
+  result = COLLECTION.find({})
+  # Convert the result to dataFrame
+  df = pd.DataFrame(result)
+  # Drop None value
+  df = df.dropna()
+  # Get the unique value from categories column
+  unique_categories = list(np.unique(df['category']))
+  # Return unique categories
+  return unique_categories
