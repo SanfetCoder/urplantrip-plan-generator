@@ -53,7 +53,7 @@ def generate_itinerary(city, days):
       # Add this random_place to current_places
       itinerary[f'Day{current_day + 1}'][current_time.strftime("%H:%M")] = serialized_place
       # Increase current time with transportation time and maximum_time_spending
-      current_time = current_time + timedelta(minutes=30) + timedelta(minutes=int(random_place['max_time_spending(min)']))
+      current_time = current_time + timedelta(minutes=30) + timedelta(minutes=int(random_place['maximum_time_spending(min)']))
 
   # return the itinerary
   return itinerary
