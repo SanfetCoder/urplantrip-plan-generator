@@ -19,7 +19,7 @@ def generate_itinerary(city, days, selected_categories):
   wanted_places = days * 5
   # 3 : Throw an error where # of places > # of availabe dataset
   if wanted_places > available_places:
-    raise Exception("The dataset is not enough. Please select other categories or decrease the number of days")
+    raise Exception("The destinations are not enough. Please select other categories or decrease the number of days")
 
   # Get the all city
   result = COLLECTION.find({})
