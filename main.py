@@ -18,7 +18,7 @@ def get_itinerary(city, days, categories):
 @app.get("/categories/{city}")
 async def categories(city):
   try:
-    unique_categories = await get_categories(city=city)
-    return unique_categories
-  except:
-    return HTTPException(status_code=400, detail="Fail")
+    category_table = await get_categories(city=city)
+    return category_table
+  except Exception as e: 
+    return HTTPException(status_code=400, detail=str(e))

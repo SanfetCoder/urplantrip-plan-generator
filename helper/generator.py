@@ -86,7 +86,7 @@ async def get_categories(city):
   for category in unique_categories:
     query = list(COLLECTION.find({'category' : category}))
     # Create a key in the hash_table
-    cateogry_table[category] = 0
+    category_table[category] = 0
     # Replace the len in the current ky
     category_table[category] = len(query)
   # Return unique categories
