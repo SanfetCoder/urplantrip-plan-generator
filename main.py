@@ -5,9 +5,11 @@ from helper.generator import generate_itinerary, get_categories
 app = FastAPI()
 
 # At root route
-@app.get("/itinerary/{city}/{days}")
-def get_itinerary(city, days):  
-  itinerary = generate_itinerary(city=city, days=int(days))
+@app.get("/itinerary/{city}/{days}/{categories}")
+def get_itinerary(city, days, categories):
+  # Convert the requestedc categories to Python list
+  cat_list = categories.split(',') if ',' in categories else [categories]
+  itinerary = generate_itinerary(city=city, days=int(days), selected_categories=categories)
   return itinerary
 
 @app.get("/categories/{city}")

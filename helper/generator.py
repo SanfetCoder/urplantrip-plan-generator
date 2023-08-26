@@ -8,7 +8,7 @@ from helper.utils import doesExceed
 DB = get_database()
 
 # Get itinerary as DataFrame
-def generate_itinerary(city, days):
+def generate_itinerary(city, days, selected_categories):
   # Current Collection
   COLLECTION = DB[city]
   # Get the all city
@@ -37,7 +37,8 @@ def generate_itinerary(city, days):
       # random_index for place
       random_index = randint(0, len(df) - 1)
       # Make sure it keeps randomizing the index til it is not the one in used_index
-      while (random_index in used_index):
+      # and also the category is the same as user's wanted categories
+      while (random_index in used_index) or (df.iloc[random_index]['category'] not in selected_categories):
         random_index = randint(0, len(df) - 1)
       # Adding this to used_index
       used_index.append(random_index)
