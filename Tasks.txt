@@ -1,4 +1,5 @@
-1. [] Itinerary should be according to the selected categories
+1. [Done] Itinerary should be according to the selected categories
 2. [] Add picture to each destination
 3. [] Add description to each destination
 4. [Done] The destination in index.ejs should be more user friendly, but still sends the valid value for API
+5. [] Able to retrieve the number of places which has the specific category
