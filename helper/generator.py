@@ -80,11 +80,11 @@ async def get_categories(city):
   # Drop None value
   df = df.dropna()
   # Get the unique value from categories column
-  unique_categories = list(np.unique(df['category']))
+  unique_categories = list(np.unique(df['Category']))
   # Create hash_table for categories and available places
   category_table = {}
   for category in unique_categories:
-    query = list(COLLECTION.find({'category' : category}))
+    query = list(COLLECTION.find({'Category' : category}))
     # Create a key in the hash_table
     category_table[category] = 0
     # Replace the len in the current ky
