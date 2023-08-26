@@ -14,12 +14,12 @@ def generate_itinerary(city, days, selected_categories):
   # Guard condition
   # If the number of places is more than avaiable dataset throw error
   # 1 : Get the number of availabe dataset in selected_categories
-  available_places = len(list(COLLECTION.find({'category' : {"$in" : selected_categories}})))
+  available_places = len(list(COLLECTION.find({'Category' : {"$in" : selected_categories}})))
   # 2 : Get # of places
   wanted_places = days * 5
   # 3 : Throw an error where # of places > # of availabe dataset
   if wanted_places > available_places:
-    raise Exception("The destinations are not enough. Please select other categories or decrease the number of days")
+    raise Exception("The destinations are not enough. Please select other categories or decrease the number of days", available_places, wanted_places)
 
   # Get the all city
   result = COLLECTION.find({})
@@ -48,7 +48,7 @@ def generate_itinerary(city, days, selected_categories):
       random_index = randint(0, len(df) - 1)
       # Make sure it keeps randomizing the index til it is not the one in used_index
       # and also the category is the same as user's wanted categories
-      while (random_index in used_index) or (df.iloc[random_index]['category'] not in selected_categories):
+      while (random_index in used_index) or (df.iloc[random_index]['Category'] not in selected_categories):
         random_index = randint(0, len(df) - 1)
       # Adding this to used_index
       used_index.append(random_index)
