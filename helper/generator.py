@@ -11,6 +11,16 @@ DB = get_database()
 def generate_itinerary(city, days, selected_categories):
   # Current Collection
   COLLECTION = DB[city]
+  # Guard condition
+  # If the number of places is more than avaiable dataset throw error
+  # 1 : Get the number of availabe dataset in selected_categories
+  available_places = len(list(COLLECTION.find({'category' : {"$in" : selected_categories}})))
+  # 2 : Get # of places
+  wanted_places = days * 5
+  # 3 : Throw an error where # of places > # of availabe dataset
+  if wanted_places > available_places:
+    raise Exception("The dataset is not enough. Please select other categories or decrease the number of days")
+
   # Get the all city
   result = COLLECTION.find({})
   # Convert the result to Pandas

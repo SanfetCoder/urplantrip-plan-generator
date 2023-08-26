@@ -9,13 +9,16 @@ app = FastAPI()
 def get_itinerary(city, days, categories):
   # Convert the requestedc categories to Python list
   cat_list = categories.split(',') if ',' in categories else [categories]
-  itinerary = generate_itinerary(city=city, days=int(days), selected_categories=categories)
-  return itinerary
+  try:
+    itinerary = generate_itinerary(city=city, days=int(days), selected_categories=cat_list)
+    return itinerary
+  except Exception as e:
+    return HTTPException(status_code = 400, detail=str(e))
 
 @app.get("/categories/{city}")
 async def categories(city):
   try:
     unique_categories = await get_categories(city=city)
+    return unique_categories
   except:
-    raise HTTPException(status_code=400, detail="Fail")
-  return unique_categories
+    return HTTPException(status_code=400, detail="Fail")
