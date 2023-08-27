@@ -66,66 +66,60 @@ def generate_itinerary(city, days, selected_categories):
     current_time = start_time
     # Create empty array for current day in the itinerary
     itinerary[f'Day{current_day + 1}'] = {}
-    for current_place in range(5):
+    for current_place in range(4):
+      print(f'In Process... Day{current_day}')
       # random_index for place
       random_index = randint(0, len(df) - 1)
-      # Make sure it keeps randomizing the index til it is not the one in used_index
-      # and also the category is the same as user's wanted categories
-      # If the selected_category is not all
-      # The category of target place using random_index
+
       target_place_category = df.iloc[random_index]['Category']
-      # The open time of target place using random_index 
-      target_place_close_time = df.iloc[random_index]['close(time)']
-      target_place_open_time = df.iloc[random_index]['open(time)']
-      # The category of target place using random_index
-      open_hour, open_minute = (get_open_time(random_index))
-      # The close time of target place using random_index 
-      close_hour, close_minute = (get_close_time(random_index))
 
-      target_open_time = time(open_hour, open_minute)
-      target_close_time = time(close_hour, close_minute)
-
-      print(df.iloc[random_index]['name_place'])
-      print(target_open_time, target_close_time)
-      print(current_time.time())
-
-      if selected_categories[0] != 'All':
-
-        # If there is time constraint
-        if target_place_open_time and target_place_close_time:
-          while (random_index in used_index) or (target_place_category not in selected_categories) or (not target_open_time <= current_time.time() < target_close_time):
-            open_hour, open_minute = (get_open_time(random_index))
-            # The close time of target place using random_index 
-            close_hour, close_minute = (get_close_time(random_index))
-
-            target_open_time = time(open_hour, open_minute)
-            target_close_time = time(close_hour, close_minute)
-            print(df.iloc[random_index]['name_place'])
-            print(target_open_time, target_close_time)
-            print(current_time.time())
-
+      # If the target_place_category is 'All' category
+      if selected_categories[0] == 'All':
+        print(f"In All category")
+        # if the place has time constraint
+        if df.iloc[random_index]['open(time)'] and df.iloc[random_index]['close(time)']:
+          print(f"in operation time condition")
+          # open_time
+          open_hour, open_minute = get_open_time(random_index)
+          open_time = time(hour=open_hour, minute=open_minute, second=0, microsecond=0)
+          # close_time
+          close_hour, close_minute = get_close_time(random_index)
+          close_time = time(hour=close_hour, minute=close_minute, second=0, microsecond=0)
+          # Check if the current time is in the place's operation time
+          while not (open_time <= current_time.time() < close_time):
+            print(f"In Loop of All category operation time")
             random_index = randint(0, len(df) - 1)
-        else:
-          # If there is no time constraint
-          while (random_index in used_index) or (target_place_category not in selected_categories):
-            random_index = randint(0, len(df) - 1)
-
+            # Update open_time and close_time
+            # open_time
+            open_hour, open_minute = get_open_time(random_index)
+            open_time = time(hour=open_hour, minute=open_minute, second=0, microsecond=0)
+            # close_time
+            close_hour, close_minute = get_close_time(random_index)
+            close_time = time(hour=close_hour, minute=close_minute, second=0, microsecond=0)
       else:
-        # Otherwise, random places
-        # If there is time constraint
-        if target_place_open_time and target_place_close_time:
-          while (random_index in used_index) or (not target_open_time <= current_time.time() < target_close_time):
-            open_hour, open_minute = (get_open_time(random_index))
-            # The close time of target place using random_index 
-            close_hour, close_minute = (get_close_time(random_index))
-
-            target_open_time = time(open_hour, open_minute)
-            target_close_time = time(close_hour, close_minute)
+        print(f'In specific categories')
+        # If the target place has time constraint
+        if df.iloc[random_index]['open(time)'] and df.iloc[random_index]['close(time)']:
+          print(f"in operation time condition")
+          # random the index until the target_place has the related categories to selected_categories and in the operation time
+          while (not df.iloc[random_index]['Category'] in selected_categories) or (not open_time <= current_time.time() < close_time):
+            print("In Loop of Specific category operation time")
             random_index = randint(0, len(df) - 1)
+            # Update open_time and close_time
+            # open_time
+            open_hour, open_minute = get_open_time(random_index)
+            open_time = time(hour=open_hour, minute=open_minute, second=0, microsecond=0)
+            # close_time
+            close_hour, close_minute = get_close_time(random_index)
+            close_time = time(hour=close_hour, minute=close_minute, second=0, microsecond=0)
+        # If the target place has no time constraint
         else:
-          # If there is no time constraint
-          while (random_index in used_index):
+          # Random the index until the target_place has the realted categories to selected_categories
+          while (not df.iloc[random_index]['Category']):
+            print("In Loop of Specific category matching selected categories")
             random_index = randint(0, len(df) - 1)
+
+      print("In process... Adding index to used_index list")
       # Adding this to used_index
       used_index.append(random_index)
       # random place
@@ -142,6 +136,9 @@ def generate_itinerary(city, days, selected_categories):
       itinerary[f'Day{current_day + 1}'][current_time.strftime("%H:%M")] = serialized_place
       # Increase current time with transportation time and maximum_time_spending
       current_time = current_time + timedelta(minutes=30) + timedelta(minutes=int(random_place['maximum_time_spending(min)']))
+
+      # print current place in current day
+      print(f'Day {current_day} - Place {current_place} - {serialized_place["name_place"]}')
 
   # return the itinerary
   return itinerary
