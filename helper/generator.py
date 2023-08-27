@@ -15,7 +15,7 @@ def generate_itinerary(city, days, selected_categories):
   # Guard condition
   # If the number of places is more than avaiable dataset throw error
   # 1 : Get the number of availabe dataset in selected_categories
-  available_places = len(list(COLLECTION.find({'Category' : {"$in" : selected_categories}})))
+  available_places = len(list(COLLECTION.find({'category' : {"$in" : selected_categories}})))
   # 2 : Get # of places
   wanted_places = days * 5
   # 3 : Throw an error where # of places > # of availabe dataset
@@ -32,7 +32,7 @@ def generate_itinerary(city, days, selected_categories):
   # Helper function
   def get_open_time(index):
     # The category of target place using random_index
-    target_place_category = df.iloc[index]['Category']
+    target_place_category = df.iloc[index]['category']
     # The open time of target place using random_index 
     target_place_open_time = df.iloc[index]['open(time)']
     # Extract hour and minute from string
@@ -43,7 +43,7 @@ def generate_itinerary(city, days, selected_categories):
   
   def get_close_time(index):
     # The category of target place using random_index
-    target_place_category = df.iloc[index]['Category']
+    target_place_category = df.iloc[index]['category']
     # The open time of target place using random_index 
     target_place_close_time = df.iloc[index]['close(time)']
     # Extract hour and minute from string
@@ -67,12 +67,14 @@ def generate_itinerary(city, days, selected_categories):
     current_time = start_time
     # Create empty array for current day in the itinerary
     itinerary[f'Day{current_day + 1}'] = {}
-    for current_place in range(5):
+    # Track if current day is done or not
+    currentDayDone = False
+    while not currentDayDone:
       print(f'In Process... Day{current_day}')
       # random_index for place
       random_index = randint(0, len(df) - 1)
 
-      target_place_category = df.iloc[random_index]['Category']
+      target_place_category = df.iloc[random_index]['category']
 
       # If the target_place_category is 'All' category
       if selected_categories[0] == 'All':
@@ -109,10 +111,27 @@ def generate_itinerary(city, days, selected_categories):
         # If the target place has time constraint
         if df.iloc[random_index]['open(time)'] and df.iloc[random_index]['close(time)']:
           print(f"in operation time condition")
+          # open_time
+          open_hour, open_minute = get_open_time(random_index)
+          open_time = time(hour=open_hour, minute=open_minute, second=0, microsecond=0)
+          # close_time
+          close_hour, close_minute = get_close_time(random_index)
+          close_time = time(hour=close_hour, minute=close_minute, second=0, microsecond=0)
           # random the index until the target_place has the related categories to selected_categories and in the operation time
-          while (not df.iloc[random_index]['Category'] in selected_categories) or (not open_time <= current_time.time() < close_time) or (random_index in used_index):
+          # This count will track the times the followgin while loop runs
+          # If more than 100 it means it can't find the place so break the looop
+          count = 0
+          while (not df.iloc[random_index]['category'] in selected_categories) or (not open_time <= current_time.time() < close_time) or (random_index in used_index):
+            count += 1
+
+            if count > len(df):
+              currentDayDone = True
+              break
+
             print("In Loop of Specific category operation time")
             random_index = randint(0, len(df) - 1)
+            print("Index :",random_index)
+            print("current_time : ", current_time.time())
             # Update open_time and close_time
             # open_time
             if df.iloc[random_index]['open(time)'] and df.iloc[random_index]['close(time)']:
@@ -124,7 +143,7 @@ def generate_itinerary(city, days, selected_categories):
         # If the target place has no time constraint
         else:
           # Random the index until the target_place has the realted categories to selected_categories
-          while (not df.iloc[random_index]['Category']) or (random_index in used_index):
+          while (not df.iloc[random_index]['category']) or (random_index in used_index):
             print("In Loop of Specific category matching selected categories")
             random_index = randint(0, len(df) - 1)
 
@@ -141,14 +160,15 @@ def generate_itinerary(city, days, selected_categories):
         'close' : random_place['close(time)'],
         'description' : random_place['DCT'] if 'DCT' in random_place.keys() else ''
       }
-      # Add this random_place to current_places
-      itinerary[f'Day{current_day + 1}'][current_time.strftime("%H:%M")] = serialized_place
       # Increase current time with transportation time and maximum_time_spending
       current_time = current_time + timedelta(minutes=30) + timedelta(minutes=int(random_place['maximum_time_spending(min)']))
-
-      # print current place in current day
-      print(f'Day {current_day} - Place {current_place} - {serialized_place["name_place"]}')
-
+      # Check if the current_time exceed end time
+      # If yes, stop generating
+      if current_time.time() >= end_time.time():
+        currentDayDone = True
+        break
+      # Add this random_place to current_places
+      itinerary[f'Day{current_day + 1}'][current_time.strftime("%H:%M")] = serialized_place
   # return the itinerary
   return itinerary
 
@@ -163,11 +183,11 @@ async def get_categories(city):
   # Drop None value
   df = df.dropna()
   # Get the unique value from categories column
-  unique_categories = list(np.unique(df['Category']))
+  unique_categories = list(np.unique(df['category']))
   # Create hash_table for categories and available places
   category_table = {}
   for category in unique_categories:
-    query = list(COLLECTION.find({'Category' : category}))
+    query = list(COLLECTION.find({'category' : category}))
     # Create a key in the hash_table
     category_table[category] = 0
     # Replace the len in the current ky
