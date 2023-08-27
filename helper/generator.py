@@ -36,6 +36,7 @@ def generate_itinerary(city, days, selected_categories):
     # The open time of target place using random_index 
     target_place_open_time = df.iloc[index]['open(time)']
     # Extract hour and minute from string
+    # The error might raise from here
     open_hour, open_minute = map(int, target_place_open_time.split(":"))
 
     return (open_hour, open_minute)
@@ -88,14 +89,21 @@ def generate_itinerary(city, days, selected_categories):
           # Check if the current time is in the place's operation time
           while not (open_time <= current_time.time() < close_time) or (random_index in used_index):
             print(f"In Loop of All category operation time")
+            print(f"Length of data : {len(df)}")
             random_index = randint(0, len(df) - 1)
+            print(f"Done randoming index")
             # Update open_time and close_time
             # open_time
-            open_hour, open_minute = get_open_time(random_index)
-            open_time = time(hour=open_hour, minute=open_minute, second=0, microsecond=0)
-            # close_time
-            close_hour, close_minute = get_close_time(random_index)
-            close_time = time(hour=close_hour, minute=close_minute, second=0, microsecond=0)
+            print(f"Getting open hour")
+            if df.iloc[random_index]['open(time)'] and df.iloc[random_index]['close(time)']:
+              open_hour, open_minute = get_open_time(random_index)
+              print(f"Got open hour {open_hour} {open_minute}")
+              open_time = time(hour=open_hour, minute=open_minute, second=0, microsecond=0)
+              # close_time
+              print(f"Getting close hour")
+              close_hour, close_minute = get_close_time(random_index)
+              print(f"Got close hour {close_hour} {close_minute}")
+              close_time = time(hour=close_hour, minute=close_minute, second=0, microsecond=0)
       else:
         print(f'In specific categories')
         # If the target place has time constraint
@@ -107,11 +115,12 @@ def generate_itinerary(city, days, selected_categories):
             random_index = randint(0, len(df) - 1)
             # Update open_time and close_time
             # open_time
-            open_hour, open_minute = get_open_time(random_index)
-            open_time = time(hour=open_hour, minute=open_minute, second=0, microsecond=0)
-            # close_time
-            close_hour, close_minute = get_close_time(random_index)
-            close_time = time(hour=close_hour, minute=close_minute, second=0, microsecond=0)
+            if df.iloc[random_index]['open(time)'] and df.iloc[random_index]['close(time)']:
+              open_hour, open_minute = get_open_time(random_index)
+              open_time = time(hour=open_hour, minute=open_minute, second=0, microsecond=0)
+              # close_time
+              close_hour, close_minute = get_close_time(random_index)
+              close_time = time(hour=close_hour, minute=close_minute, second=0, microsecond=0)
         # If the target place has no time constraint
         else:
           # Random the index until the target_place has the realted categories to selected_categories
