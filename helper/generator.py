@@ -160,6 +160,8 @@ def generate_itinerary(city, days, selected_categories):
         'close' : random_place['close(time)'],
         'description' : random_place['DCT'] if 'DCT' in random_place.keys() else ''
       }
+      # Add this random_place to current_places
+      itinerary[f'Day{current_day + 1}'][current_time.strftime("%H:%M")] = serialized_place
       # Increase current time with transportation time and maximum_time_spending
       current_time = current_time + timedelta(minutes=30) + timedelta(minutes=int(random_place['maximum_time_spending(min)']))
       # Check if the current_time exceed end time
@@ -167,8 +169,6 @@ def generate_itinerary(city, days, selected_categories):
       if current_time.time() >= end_time.time():
         currentDayDone = True
         break
-      # Add this random_place to current_places
-      itinerary[f'Day{current_day + 1}'][current_time.strftime("%H:%M")] = serialized_place
   # return the itinerary
   return itinerary
 
