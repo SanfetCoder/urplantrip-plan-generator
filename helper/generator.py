@@ -66,7 +66,7 @@ def generate_itinerary(city, days, selected_categories):
     current_time = start_time
     # Create empty array for current day in the itinerary
     itinerary[f'Day{current_day + 1}'] = {}
-    for current_place in range(4):
+    for current_place in range(5):
       print(f'In Process... Day{current_day}')
       # random_index for place
       random_index = randint(0, len(df) - 1)
@@ -86,7 +86,7 @@ def generate_itinerary(city, days, selected_categories):
           close_hour, close_minute = get_close_time(random_index)
           close_time = time(hour=close_hour, minute=close_minute, second=0, microsecond=0)
           # Check if the current time is in the place's operation time
-          while not (open_time <= current_time.time() < close_time):
+          while not (open_time <= current_time.time() < close_time) or (random_index in used_index):
             print(f"In Loop of All category operation time")
             random_index = randint(0, len(df) - 1)
             # Update open_time and close_time
@@ -102,7 +102,7 @@ def generate_itinerary(city, days, selected_categories):
         if df.iloc[random_index]['open(time)'] and df.iloc[random_index]['close(time)']:
           print(f"in operation time condition")
           # random the index until the target_place has the related categories to selected_categories and in the operation time
-          while (not df.iloc[random_index]['Category'] in selected_categories) or (not open_time <= current_time.time() < close_time):
+          while (not df.iloc[random_index]['Category'] in selected_categories) or (not open_time <= current_time.time() < close_time) or (random_index in used_index):
             print("In Loop of Specific category operation time")
             random_index = randint(0, len(df) - 1)
             # Update open_time and close_time
@@ -115,7 +115,7 @@ def generate_itinerary(city, days, selected_categories):
         # If the target place has no time constraint
         else:
           # Random the index until the target_place has the realted categories to selected_categories
-          while (not df.iloc[random_index]['Category']):
+          while (not df.iloc[random_index]['Category']) or (random_index in used_index):
             print("In Loop of Specific category matching selected categories")
             random_index = randint(0, len(df) - 1)
 
