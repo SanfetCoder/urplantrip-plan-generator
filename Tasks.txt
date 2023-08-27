@@ -2,4 +2,4 @@
 3. [Done] Add description to each destination
 4. [Done] The destination in index.ejs should be more user friendly, but still sends the valid value for API
 5. [Done] Able to retrieve the number of places which has the specific category
-6. [] "All" categories should be available
+6. [Done] "All" categories should be available

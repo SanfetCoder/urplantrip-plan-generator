@@ -2,13 +2,14 @@ from helper.database.db import get_database
 import pandas as pd
 from random import randint
 import numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from helper.utils import doesExceed
 
 DB = get_database()
 
 # Get itinerary as DataFrame
 def generate_itinerary(city, days, selected_categories):
+
   # Current Collection
   COLLECTION = DB[city]
   # Guard condition
@@ -19,7 +20,7 @@ def generate_itinerary(city, days, selected_categories):
   wanted_places = days * 5
   # 3 : Throw an error where # of places > # of availabe dataset
   if (wanted_places > available_places) and selected_categories[0] != 'All':
-    raise Exception("The destinations are not enough. Please select other categories or decrease the number of days", available_places, wanted_places, selected_categories)
+    raise Exception("The destinations are not enough. Please select other categories or decrease the number of days")
 
   # Get the all city
   result = COLLECTION.find({})
@@ -27,6 +28,28 @@ def generate_itinerary(city, days, selected_categories):
   df = pd.DataFrame(result)
   # Drop all Nan
   df = df.dropna()
+
+  # Helper function
+  def get_open_time(index):
+    # The category of target place using random_index
+    target_place_category = df.iloc[index]['Category']
+    # The open time of target place using random_index 
+    target_place_open_time = df.iloc[index]['open(time)']
+    # Extract hour and minute from string
+    open_hour, open_minute = map(int, target_place_open_time.split(":"))
+
+    return (open_hour, open_minute)
+  
+  def get_close_time(index):
+    # The category of target place using random_index
+    target_place_category = df.iloc[index]['Category']
+    # The open time of target place using random_index 
+    target_place_close_time = df.iloc[index]['close(time)']
+    # Extract hour and minute from string
+    close_hour, close_minute = map(int, target_place_close_time.split(":"))
+
+    return (close_hour, close_minute)
+
 
   # Itinerary
   itinerary = {}
@@ -49,13 +72,60 @@ def generate_itinerary(city, days, selected_categories):
       # Make sure it keeps randomizing the index til it is not the one in used_index
       # and also the category is the same as user's wanted categories
       # If the selected_category is not all
+      # The category of target place using random_index
+      target_place_category = df.iloc[random_index]['Category']
+      # The open time of target place using random_index 
+      target_place_close_time = df.iloc[random_index]['close(time)']
+      target_place_open_time = df.iloc[random_index]['open(time)']
+      # The category of target place using random_index
+      open_hour, open_minute = (get_open_time(random_index))
+      # The close time of target place using random_index 
+      close_hour, close_minute = (get_close_time(random_index))
+
+      target_open_time = time(open_hour, open_minute)
+      target_close_time = time(close_hour, close_minute)
+
+      print(df.iloc[random_index]['name_place'])
+      print(target_open_time, target_close_time)
+      print(current_time.time())
+
       if selected_categories[0] != 'All':
-        while (random_index in used_index) or (df.iloc[random_index]['Category'] not in selected_categories):
-          random_index = randint(0, len(df) - 1)
+
+        # If there is time constraint
+        if target_place_open_time and target_place_close_time:
+          while (random_index in used_index) or (target_place_category not in selected_categories) or (not target_open_time <= current_time.time() < target_close_time):
+            open_hour, open_minute = (get_open_time(random_index))
+            # The close time of target place using random_index 
+            close_hour, close_minute = (get_close_time(random_index))
+
+            target_open_time = time(open_hour, open_minute)
+            target_close_time = time(close_hour, close_minute)
+            print(df.iloc[random_index]['name_place'])
+            print(target_open_time, target_close_time)
+            print(current_time.time())
+
+            random_index = randint(0, len(df) - 1)
+        else:
+          # If there is no time constraint
+          while (random_index in used_index) or (target_place_category not in selected_categories):
+            random_index = randint(0, len(df) - 1)
+
       else:
         # Otherwise, random places
-        while (random_index in used_index):
-          random_index = randint(0, len(df) - 1)
+        # If there is time constraint
+        if target_place_open_time and target_place_close_time:
+          while (random_index in used_index) or (not target_open_time <= current_time.time() < target_close_time):
+            open_hour, open_minute = (get_open_time(random_index))
+            # The close time of target place using random_index 
+            close_hour, close_minute = (get_close_time(random_index))
+
+            target_open_time = time(open_hour, open_minute)
+            target_close_time = time(close_hour, close_minute)
+            random_index = randint(0, len(df) - 1)
+        else:
+          # If there is no time constraint
+          while (random_index in used_index):
+            random_index = randint(0, len(df) - 1)
       # Adding this to used_index
       used_index.append(random_index)
       # random place
@@ -98,3 +168,4 @@ async def get_categories(city):
     category_table[category] = len(query)
   # Return unique categories
   return category_table
+

@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from helper.generator import generate_itinerary, get_categories
+import traceback
 
 # Create an app for this API
 app = FastAPI()
@@ -13,7 +14,7 @@ def get_itinerary(city, days, categories):
     itinerary = generate_itinerary(city=city, days=int(days), selected_categories=cat_list)
     return itinerary
   except Exception as e:
-    return HTTPException(status_code = 400, detail=str(e))
+    return HTTPException(status_code = 400, detail=f'{str(e)}')
 
 @app.get("/categories/{city}")
 async def categories(city):
