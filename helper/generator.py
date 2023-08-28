@@ -159,7 +159,8 @@ def generate_itinerary(city, days, selected_categories):
         'open' : random_place['open(time)'],
         'close' : random_place['close(time)'],
         'description' : random_place['DCT'] if 'DCT' in random_place.keys() else '',
-        'img_cover' : random_place['img_cover'] if 'img_cover' in random_place.keys() else ''
+        'img_cover' : random_place['img_cover'] if 'img_cover' in random_place.keys() else '',
+        'special_events' : random_place['special_events'].split(", ")
       }
       # Add this random_place to current_places
       itinerary[f'Day{current_day + 1}'][current_time.strftime("%H:%M")] = serialized_place
