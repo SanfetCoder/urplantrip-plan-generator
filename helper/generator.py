@@ -15,12 +15,12 @@ def generate_itinerary(city, days, selected_categories):
   # Guard condition
   # If the number of places is more than avaiable dataset throw error
   # 1 : Get the number of availabe dataset in selected_categories
-  available_places = len(list(COLLECTION.find({'category' : {"$in" : selected_categories}})))
-  # 2 : Get # of places
-  wanted_places = days * 5
-  # 3 : Throw an error where # of places > # of availabe dataset
-  if (wanted_places > available_places) and selected_categories[0] != 'All':
-    raise Exception(f"The destinations you wish to go are not enough for {days} days. Please select more categories or decrease the number of days")
+  # available_places = len(list(COLLECTION.find({'category' : {"$in" : selected_categories}})))
+  # # 2 : Get # of places
+  # wanted_places = days * 3
+  # # 3 : Throw an error where # of places > # of availabe dataset
+  # if (wanted_places > available_places) and selected_categories[0] != 'All':
+  #   raise Exception(f"The destinations you wish to go are not enough for {days} days. Please select more categories or decrease the number of days")
 
   # Get the all city
   result = COLLECTION.find({})
