@@ -27,7 +27,7 @@ def generate_itinerary(city, days, selected_categories):
   # Convert the result to Pandas
   df = pd.DataFrame(result)
   # Drop all Nan
-  df = df.dropna()
+  df = df[df['name_place'] != None]
 
   # Helper function
   def get_open_time(index):
@@ -50,7 +50,6 @@ def generate_itinerary(city, days, selected_categories):
     close_hour, close_minute = map(int, target_place_close_time.split(":"))
 
     return (close_hour, close_minute)
-
 
   # Itinerary
   itinerary = {}
@@ -177,16 +176,21 @@ def generate_itinerary(city, days, selected_categories):
 
 # Get unqieu categories based on the city
 async def get_categories(city):
+  print(city)
   # Selected collection
   COLLECTION = DB[city]
+  print(COLLECTION)
   # Fetch all data from the collection
   result = COLLECTION.find({})
   # Convert the result to dataFrame
   df = pd.DataFrame(result)
+  print(df.columns)
   # Drop None value
-  df = df.dropna()
+  df = df[df['name_place'] != None]
+  print(df)
   # Get the unique value from categories column
   unique_categories = list(np.unique(df['category']))
+  print(unique_categories)
   # Create hash_table for categories and available places
   category_table = {}
   for category in unique_categories:
