@@ -27,7 +27,7 @@ def generate_itinerary(city, days, selected_categories):
   # Convert the result to Pandas
   df = pd.DataFrame(result)
   # Drop all Nan
-  df = df[df['name_place'] != None]
+  df = df[df['name_place'].notna()]
 
   # Helper function
   def get_open_time(index):
@@ -159,7 +159,7 @@ def generate_itinerary(city, days, selected_categories):
         'close' : random_place['close(time)'],
         'description' : random_place['DCT'] if 'DCT' in random_place.keys() else '',
         'img_cover' : random_place['img_cover'] if 'img_cover' in random_place.keys() else '',
-        'special_events' : random_place['special_events'].split(", "),
+        'special_events' : random_place['special_events'].split(", ") if random_place['special_events'] != '""' else "",
         'high_level_events' : random_place['high_level_events'].split(", ") if random_place['high_level_events'] != '""' else ""
       }
       # Add this random_place to current_places

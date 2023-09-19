@@ -14,7 +14,7 @@ def get_itinerary(city, days, categories):
     itinerary = generate_itinerary(city=city, days=int(days), selected_categories=cat_list)
     return itinerary
   except Exception as e:
-    return HTTPException(status_code = 400, detail=f'{str(e)}')
+    return HTTPException(status_code = 400, detail=f'{str(e)} {traceback.format_exc()}')
 
 @app.get("/categories/{city}")
 async def categories(city):
