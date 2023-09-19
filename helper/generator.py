@@ -28,7 +28,7 @@ def generate_itinerary(city, days, selected_categories):
   df = pd.DataFrame(result)
   # Drop all Nan
   df = df[df['name_place'].notna()]
-
+  print(df)
   # Helper function
   def get_open_time(index):
     # The category of target place using random_index
@@ -186,7 +186,7 @@ async def get_categories(city):
   df = pd.DataFrame(result)
   print(df.columns)
   # Drop None value
-  df = df[df['name_place'] != None]
+  df = df[df['name_place'].notna()]
   print(df)
   # Get the unique value from categories column
   unique_categories = list(np.unique(df['category']))
